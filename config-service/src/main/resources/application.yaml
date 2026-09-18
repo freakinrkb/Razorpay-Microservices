@@ -4,7 +4,7 @@ spring:
 
   cloud:
     config.server.git:
-      uri: ${GIT_CONFIG_REPO:https://github.com/Anuj-Kumar-Sharma/distributed-razrorpay-config}
+      uri: ${GIT_CONFIG_REPO:https://github.com/freakinrkb/razorpay-config}
       username: ${GIT_USERNAME:}
       password: ${GIT_PASSWORD:}
       default-label: master
