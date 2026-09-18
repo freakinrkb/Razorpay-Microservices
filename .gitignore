@@ -1,0 +1,22 @@
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# IntelliJ
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Env / secrets - never commit real keys
+.env
+*.pem
+*.jks
