@@ -1,7 +1,6 @@
 com.razorpay.common_lib.util.SharedSecurityAutoConfiguration
 com.razorpay.common_lib.config.SharedKafkaAutoConfiguration
-com.razorpay.common_lib.web.SharedWebFilterAutoConfiguration
 com.razorpay.common_lib.idempotency.SharedResilienceAutoConfiguration
 com.razorpay.common_lib.audit.SharedAuditAutoConfiguration
 com.razorpay.common_lib.exception.SharedExceptionAutoConfiguration
-com.razorpay.common_lib.config.ZipkinConfig
+com.razorpay.common_lib.cache.SharedCacheAutoConfiguration
