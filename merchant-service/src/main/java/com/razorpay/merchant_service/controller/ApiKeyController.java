@@ -30,7 +30,7 @@ public class ApiKeyController {
 
     @GetMapping
     public ResponseEntity<List<ApiKeyResponse>> listByMerchant() {
-        return ResponseEntity.ok((List<ApiKeyResponse>) apiKeyService.listByMerchant(merchantContext.getMerchantId()));
+        return ResponseEntity.ok(apiKeyService.listByMerchant(merchantContext.getMerchantId()));
     }
 
     @DeleteMapping("/keyId")
