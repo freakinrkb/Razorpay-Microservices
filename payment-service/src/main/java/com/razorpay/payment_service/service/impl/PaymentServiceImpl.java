@@ -18,6 +18,7 @@ import com.razorpay.payment_service.outbox.OutboxEventPublisher;
 import com.razorpay.payment_service.repository.OrderRepository;
 import com.razorpay.payment_service.repository.OutboxEventRepository;
 import com.razorpay.payment_service.repository.PaymentRepository;
+import com.razorpay.payment_service.saga.PaymentAuthorizationRecorder;
 import com.razorpay.payment_service.service.PaymentService;
 import com.razorpay.payment_service.statemachine.PaymentTransitionService;
 import lombok.RequiredArgsConstructor;
@@ -40,10 +41,18 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
     private final PaymentTransitionService paymentTransitionService;
     private final OutboxEventPublisher eventPublisher;
+    private final PaymentAuthorizationRecorder paymentAuthorizationRecorder;
 
     @Override
     @Transactional()
-    public PaymentResponse initiate(UUID merchantId, PaymentInitRequest request) {
+    public PaymentResponse initiate(UUID merchantId, PaymentInitRequest request, String idempotencyKey) {
+        if (idempotencyKey != null) {
+            var existing = paymentAuthorizationRecorder.findExistingAttempt(merchantId, idempotencyKey);
+            if (existing.isPresent()) {
+                log.info("Idempotency replay for paymentId: {}", existing.get().id());
+                return existing.get();
+            }
+        }
 //        OrderRecord order = orderRepository.findByIdAndMerchantId(request.orderId(), merchantId)
 //                .orElseThrow(() -> new ResourceNotFoundException("Order", request.orderId()));
         OrderRecord order = orderRepository.findByIdAndMerchantIdForUpdate(request.orderId(), merchantId)
@@ -63,7 +72,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .amount(order.getAmount())
                 .status(PaymentStatus.CREATED)
                 .method(request.method())
-                .idempotencyKey(UUID.randomUUID().toString())
+                .idempotencyKey(idempotencyKey != null ? idempotencyKey : UUID.randomUUID().toString())
                 .methodDetails(request.methodDetails())
                 .build();
         payment = paymentRepository.save(payment);
